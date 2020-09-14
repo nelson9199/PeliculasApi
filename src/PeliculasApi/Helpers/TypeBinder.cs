@@ -1,0 +1,35 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Newtonsoft.Json;
+
+namespace src.PeliculasApi.Helpers
+{
+    public class TypeBinder<T> : IModelBinder
+    {
+        public Task BindModelAsync(ModelBindingContext bindingContext)
+        {
+            var nombrePropiedad = bindingContext.ModelName;
+
+            var proveedorDeValores = bindingContext.ValueProvider.GetValue(nombrePropiedad);
+
+            if (proveedorDeValores == ValueProviderResult.None)
+            {
+                return Task.CompletedTask;
+            }
+
+            try
+            {
+                var valorDeserealizado = JsonConvert.DeserializeObject<List<T>>(proveedorDeValores.FirstValue);
+
+                bindingContext.Result = ModelBindingResult.Success(valorDeserealizado);
+            }
+            catch
+            {
+                bindingContext.ModelState.TryAddModelError(nombrePropiedad, "Valor invalido para tipo List<int>");
+            }
+
+            return Task.CompletedTask;
+        }
+    }
+}

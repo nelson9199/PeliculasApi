@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using src.PeliculasApi.Data;
+using src.PeliculasApi.Services;
 
 namespace PeliculasApi
 {
@@ -33,7 +34,9 @@ namespace PeliculasApi
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
+
+            services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
